@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Indy Move Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#e9edf4;
+    --ink:#1a1d29;
+    --muted:#5b6172;
+    --line:#dde2ec;
+    --card:#ffffff;
+    --header:#1b1740;
+    --header2:#2a2363;
+    --radius:18px;
+    --shadow:0 1px 2px rgba(20,22,40,.05),0 8px 24px -12px rgba(20,22,40,.18);
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;line-height:1.45;
+    padding-bottom:48px;
+  }
+
+  /* ---------- Mission-control header ---------- */
+  .hero{
+    position:sticky;top:0;z-index:50;
+    background:linear-gradient(135deg,var(--header),var(--header2));
+    color:#f4f5ff;padding:16px 18px 18px;
+    box-shadow:0 10px 30px -16px rgba(0,0,0,.6);
+  }
+  .hero-row{display:flex;align-items:center;gap:16px;max-width:1180px;margin:0 auto;flex-wrap:wrap;}
+  .ring-wrap{position:relative;width:64px;height:64px;flex:none;}
+  .ring-wrap svg{transform:rotate(-90deg);}
+  .ring-bg{stroke:rgba(255,255,255,.16);}
+  .ring-fg{stroke:#9fe3c5;transition:stroke-dashoffset .5s ease;}
+  .ring-pct{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-family:'JetBrains Mono',monospace;font-weight:700;font-size:15px;
+  }
+  .hero-title{flex:1 1 200px;min-width:160px;}
+  .hero-title h1{
+    font-family:'Bricolage Grotesque',sans-serif;font-weight:800;
+    font-size:clamp(22px,5.5vw,30px);margin:0;letter-spacing:-.02em;line-height:1.02;
+  }
+  .hero-title p{margin:3px 0 0;font-size:12.5px;color:#c4c6ee;}
+  .count-strip{display:flex;gap:8px;flex-wrap:wrap;}
+  .chip{
+    background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.16);
+    border-radius:12px;padding:7px 11px;display:flex;flex-direction:column;line-height:1.1;
+  }
+  .chip b{font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;}
+  .chip span{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#bdbff0;margin-top:2px;}
+  .reset{
+    margin-left:auto;background:rgba(255,255,255,.08);color:#f4f5ff;cursor:pointer;
+    border:1px solid rgba(255,255,255,.18);border-radius:11px;padding:9px 13px;
+    font-family:'Inter';font-size:12.5px;font-weight:600;min-height:40px;
+  }
+  .reset:hover{background:rgba(255,255,255,.16);}
+  .savenote{max-width:1180px;margin:10px auto 0;font-size:11px;color:#b9bbed;}
+
+  /* ---------- Provided banner ---------- */
+  .provided{
+    max-width:1180px;margin:16px auto 4px;padding:0 18px;
+    display:flex;gap:9px;align-items:flex-start;
+  }
+  .provided .tag{
+    background:#dff5e9;color:#0c6b43;border:1px solid #bce6d2;border-radius:10px;
+    font-size:12px;font-weight:600;padding:9px 12px;line-height:1.4;
+  }
+
+  /* ---------- Grid + cards ---------- */
+  .grid{
+    max-width:1180px;margin:0 auto;padding:14px 18px 0;
+    display:grid;grid-template-columns:1fr;gap:14px;
+    align-items:start;
+  }
+  @media(min-width:740px){.grid{grid-template-columns:1fr 1fr;}}
+  @media(min-width:1080px){.grid{grid-template-columns:1fr 1fr 1fr;}}
+
+  .card{
+    background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
+    overflow:hidden;border:1px solid var(--line);
+    border-top:5px solid var(--c);
+  }
+  .card.done{opacity:.62;}
+  .chead{
+    display:flex;align-items:center;gap:11px;padding:14px 15px;cursor:pointer;
+    user-select:none;
+  }
+  .icon{
+    width:34px;height:34px;border-radius:10px;flex:none;
+    display:flex;align-items:center;justify-content:center;font-size:18px;
+    background:color-mix(in srgb,var(--c) 15%,#fff);
+  }
+  .ctitle{flex:1;min-width:0;}
+  .ctitle h2{
+    margin:0;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;
+    font-size:16.5px;letter-spacing:-.01em;color:var(--ink);
+  }
+  .ctitle .sub{font-size:11px;color:var(--muted);margin-top:1px;}
+  .ccount{
+    font-family:'JetBrains Mono',monospace;font-weight:700;font-size:12.5px;
+    color:var(--c);background:color-mix(in srgb,var(--c) 12%,#fff);
+    padding:3px 8px;border-radius:8px;flex:none;
+  }
+  .chev{flex:none;transition:transform .25s ease;color:var(--muted);width:16px;text-align:center;}
+  .card.collapsed .chev{transform:rotate(-90deg);}
+  .cbar{height:3px;background:var(--line);}
+  .cbar i{display:block;height:100%;background:var(--c);width:0;transition:width .4s ease;}
+
+  .items{padding:6px 8px 10px;}
+  .card.collapsed .items,.card.collapsed .cbar{display:none;}
+
+  .item{
+    display:flex;align-items:flex-start;gap:11px;padding:10px 9px;border-radius:11px;
+    cursor:pointer;position:relative;min-height:44px;
+  }
+  .item:hover{background:color-mix(in srgb,var(--c) 7%,#fff);}
+  .item input{position:absolute;opacity:0;width:1px;height:1px;}
+  .box{
+    flex:none;width:21px;height:21px;border-radius:6px;margin-top:1px;
+    border:2px solid #c5cbd8;background:#fff;
+    display:flex;align-items:center;justify-content:center;transition:.15s;
+  }
+  .box svg{width:13px;height:13px;opacity:0;transform:scale(.5);transition:.15s;}
+  .item input:checked ~ .box{background:var(--c);border-color:var(--c);}
+  .item input:checked ~ .box svg{opacity:1;transform:scale(1);}
+  .item input:focus-visible ~ .box{outline:3px solid color-mix(in srgb,var(--c) 45%,#fff);outline-offset:2px;}
+  .txt{font-size:14px;color:var(--ink);}
+  .txt small{display:block;font-size:11.5px;color:var(--muted);margin-top:2px;line-height:1.35;}
+  .item input:checked ~ .txt{color:#9aa0b0;text-decoration:line-through;text-decoration-color:#c5cbd8;}
+  .item input:checked ~ .txt small{text-decoration:none;}
+
+  footer{max-width:1180px;margin:22px auto 0;padding:0 18px;color:var(--muted);font-size:11.5px;}
+
+  .tl-d{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:11px;color:var(--c);}
+  .item input:checked ~ .txt .tl-d{color:#9aa0b0;}
+
+  @media (prefers-reduced-motion:reduce){*{transition:none !important;}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-row">
+    <div class="ring-wrap" aria-hidden="true">
+      <svg width="64" height="64" viewBox="0 0 64 64">
+        <circle class="ring-bg" cx="32" cy="32" r="27" fill="none" stroke-width="7"/>
+        <circle id="ring" class="ring-fg" cx="32" cy="32" r="27" fill="none" stroke-width="7"
+                stroke-linecap="round" stroke-dasharray="169.6" stroke-dashoffset="169.6"/>
+      </svg>
+      <div class="ring-pct" id="ringPct">0%</div>
+    </div>
+    <div class="hero-title">
+      <h1>Indy Move Tracker</h1>
+      <p id="overall">0 of 0 done · Michigan → Indianapolis</p>
+    </div>
+    <div class="count-strip">
+      <div class="chip"><b id="dMove">–</b><span>days to move</span></div>
+      <div class="chip"><b>Jul 7</b><span>orientation 8a</span></div>
+    </div>
+    <button class="reset" id="resetBtn">Reset all</button>
+  </div>
+  <div class="savenote" id="saveNote">Progress saves automatically.</div>
+</header>
+
+<div class="provided">
+  <div class="tag">✅ <b>Already in the unit — don't buy:</b> fridge · stove/oven · microwave · dishwasher · in-unit washer &amp; dryer.</div>
+</div>
+
+<main class="grid" id="grid"></main>
+
+<footer id="footer"></footer>
+
+<script>
+/* ---------------- DATA ---------------- */
+const CHECK = '<svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+const TIMELINE = {
+  id:'tl', title:'Timeline', icon:'📅', color:'#4f46e5',
+  sub:'The when — counts down to Jul 6 + the 60-day deadline',
+  items:[
+    {d:'This wk', t:'Lock an internet install slot (Jul 6–7) + bind renters insurance'},
+    {d:'~Jul 1', t:'Set up electric (AES) and gas/water (Citizens); send insurance proof to leasing'},
+    {d:'~Jul 1', t:'Start USPS mail forwarding; confirm U-Haul + helpers'},
+    {d:'Jul 5', t:'Pack the first-night box in the car; final readings/photos at old place'},
+    {d:'Jul 6', t:'MOVE DAY — walkthrough photos to leasing; find breaker/shutoff/detectors'},
+    {d:'Jul 7', t:'Orientation, 8:00 AM EDT — leave early'},
+    {d:'Wk Jul 7', t:'Update address everywhere (employer, bank, cards, pharmacy)'},
+    {d:'By Sep 4', t:'IN license, plates, voter reg — the 60-day legal deadline (do it early)'},
+  ]
+};
+
+const CATS = [
+  { id:'util', title:'Utilities & Accounts', icon:'⚡', color:'#d97706', sub:'Set up before keys + change of address', items:[
+    {t:'Schedule internet / WiFi install', n:'Compare AT&T Fiber · Xfinity · Metronet by address. Prioritize fiber for dev work + gaming.'},
+    {t:'Set up electric — AES Indiana', n:'Call (317) 261-8222 · 3–5 business days before move-in.'},
+    {t:'Set up gas + water/sewer — Citizens Energy', n:'Online or (317) 924-3311 · handles gas, water AND wastewater.'},
+    {t:'Confirm trash/recycling', n:'Often the complex; otherwise City of Indianapolis DPW. Ask leasing.'},
+    {t:'Bind renters insurance + send proof to leasing'},
+    {t:'Start USPS mail forwarding', n:'Set effective date to ~Jul 6.'},
+    {t:'Update address — DB Services / EaseCentral'},
+    {t:'Update address — Huntington Bank', n:'Confirm the direct-deposit voided-check issue is cleared before first payday.'},
+    {t:'Update address — credit cards, Amazon, subscriptions'},
+    {t:'Transfer prescriptions / pick a new pharmacy'},
+    {t:'Reserve elevator / move-in time slot with the complex'},
+  ]},
+  { id:'car', title:'Car & Indiana DMV', icon:'🚗', color:'#e11d48', sub:'BMV: 60 days from residency — bring both cars', items:[
+    {t:'Update auto insurance to your Indiana address', n:'Do this BEFORE the BMV — you need IN proof to register.'},
+    {t:'Indiana driver\u2019s license — you', n:'Surrender MI license; bring ID, SSN, residency docs; get Real ID. 60-day deadline.'},
+    {t:'Indiana driver\u2019s license — partner'},
+    {t:'Title + register the Crosstrek', n:'Bring the car for a free VIN inspection + IN insurance proof. Late titling = $30/vehicle penalty.'},
+    {t:'Title + register partner\u2019s vehicle'},
+    {t:'Register to vote', n:'Can bundle it with the license appointment.'},
+  ]},
+  { id:'night', title:'First-Night Box', icon:'🌙', color:'#7c3aed', sub:'Pack in the CAR, not the truck', items:[
+    {t:'Toilet paper + paper towels'},
+    {t:'Phone + laptop chargers'},
+    {t:'Toiletries + any medications'},
+    {t:'One set of bedding + pillows'},
+    {t:'Hand soap + a few dish supplies'},
+    {t:'Box cutter + a screwdriver'},
+    {t:'Trash bags'},
+    {t:'Snacks, water, change of clothes'},
+    {t:'Shower curtain + liner', n:'So you can shower before orientation morning.'},
+  ]},
+  { id:'kitchen', title:'Kitchen', icon:'🍳', color:'#ea580c', sub:'Appliances are provided — just gear', items:[
+    {t:'Pots & pans (skillet, saucepan, stockpot)'},
+    {t:'Baking sheet(s) + a casserole dish'},
+    {t:'Mixing bowls + colander'},
+    {t:'Knife set + cutting boards'},
+    {t:'Utensils: spatula, spoons, tongs, ladle, whisk'},
+    {t:'Can opener, peeler, grater, measuring cups/spoons'},
+    {t:'Plates, bowls, mugs, drinking glasses'},
+    {t:'Flatware (forks/knives/spoons)'},
+    {t:'Food containers + ziplocks, foil, wrap, parchment'},
+    {t:'Dish rack, dish soap, sponges, towels, oven mitts'},
+    {t:'Kitchen trash can + bags; recycling bin'},
+    {t:'Water filter pitcher'},
+    {t:'Small appliances: coffee/kettle, toaster, air fryer', n:'Your pick on which.'},
+  ]},
+  { id:'bed', title:'Bedroom', icon:'🛏️', color:'#9333ea', sub:'Bed frame/mattress likely in the truck', items:[
+    {t:'Sheets (right size) + mattress protector'},
+    {t:'Comforter/duvet + cover, extra blankets'},
+    {t:'Pillows'},
+    {t:'Blackout curtains', n:'Worth it for sleeping off-schedule.'},
+    {t:'Nightstands + lamps'},
+    {t:'Hangers + closet organizers'},
+    {t:'Full-length mirror'},
+    {t:'Hamper'},
+  ]},
+  { id:'bath', title:'Bathroom', icon:'🚿', color:'#0891b2', sub:'', items:[
+    {t:'Bath + hand towels, washcloths'},
+    {t:'Bath mat / rug'},
+    {t:'Toilet brush + plunger'},
+    {t:'Hand soap + dispenser, shower caddy'},
+    {t:'Bathroom trash can'},
+    {t:'First aid kit'},
+    {t:'Scale (optional)'},
+  ]},
+  { id:'living', title:'Living Room', icon:'🛋️', color:'#059669', sub:'Sofa/tables likely in the truck', items:[
+    {t:'TV wall mount', n:'Needs a stud finder + drill — see Tools.'},
+    {t:'Area rug'},
+    {t:'Lamps / floor lighting'},
+    {t:'Throw pillows / blanket'},
+    {t:'Curtains or blinds + rods for each window'},
+    {t:'Wall art / decor / plants'},
+  ]},
+  { id:'office', title:'Office & Gaming', icon:'🖥️', color:'#2563eb', sub:'Protect the rig + get wired', items:[
+    {t:'Surge protectors / power strips (properly rated)'},
+    {t:'UPS battery backup', n:'Shields the i9 build from brownouts and outages.'},
+    {t:'Mesh WiFi or a strong router + Ethernet cables', n:'Hardwire the gaming PC for lower latency than WiFi.'},
+    {t:'Cable management (clips, sleeves, velcro)'},
+    {t:'Webcam + headset for remote calls/onboarding'},
+    {t:'Desk lamp'},
+    {t:'Monitor arm (optional)'},
+    {t:'A workspace for partner\u2019s grading/lesson planning'},
+  ]},
+  { id:'entry', title:'Entryway & Decor', icon:'🚪', color:'#db2777', sub:'', items:[
+    {t:'Doormat'},
+    {t:'Shoe rack / coat hooks'},
+    {t:'Key holder / small console'},
+    {t:'Wall clock'},
+    {t:'Command strips/hooks + picture-hanging kit'},
+  ]},
+  { id:'tools', title:'Tools & Household Basics', icon:'🔧', color:'#475569', sub:'', items:[
+    {t:'Tool kit: hammer, screwdrivers, drill + bits, level, tape measure, pliers, wrench'},
+    {t:'Stud finder (TV mount + heavy shelves)'},
+    {t:'Batteries (AA/AAA) + light bulbs'},
+    {t:'Extension cords'},
+    {t:'Flashlight + step stool'},
+    {t:'Fire extinguisher (kitchen)'},
+    {t:'HVAC filters in the right size'},
+    {t:'Storage bins'},
+  ]},
+  { id:'clean', title:'Cleaning & Laundry', icon:'🧺', color:'#0d9488', sub:'In-unit W/D — supplies only', items:[
+    {t:'Laundry detergent + dryer sheets; stain remover'},
+    {t:'Laundry baskets/hampers + drying rack'},
+    {t:'Iron + ironing board'},
+    {t:'Vacuum (cordless stick is great for apartments)'},
+    {t:'Broom + dustpan, mop + bucket (or Swiffer)'},
+    {t:'All-purpose, glass + bathroom cleaner; disinfecting wipes'},
+    {t:'Rubber gloves, scrub brushes'},
+    {t:'Trash bags (kitchen + small + contractor)'},
+  ]},
+  { id:'groc', title:'Groceries & Pantry', icon:'🛒', color:'#65a30d', sub:'First-run staples', items:[
+    {t:'Pantry staples (rice, pasta, oil, condiments)'},
+    {t:'Salt, pepper, basic spices'},
+    {t:'Coffee / tea'},
+    {t:'Fridge + freezer basics'},
+    {t:'Cleaning + paper goods restock'},
+    {t:'Snacks'},
+  ]},
+];
+
+const CARDS=[TIMELINE,...CATS];
+
+/* ---------------- STATE / STORAGE ---------------- */
+const STORE_KEY='indy_move_v1';
+let state={checks:{}};
+let storageOK=true;
+
+function loadState(){
+  try{
+    const raw=localStorage.getItem(STORE_KEY);
+    if(raw){const p=JSON.parse(raw);if(p&&p.checks)state=p;}
+  }catch(e){storageOK=false;}
+}
+function saveState(){
+  try{localStorage.setItem(STORE_KEY,JSON.stringify(state));}
+  catch(e){storageOK=false;updateSaveNote();}
+}
+function updateSaveNote(){
+  const n=document.getElementById('saveNote');
+  n.textContent=storageOK?'Progress saves automatically.':'Heads up: progress won\u2019t persist in this view, but you can still check things off.';
+}
+
+/* ---------------- COUNTS ---------------- */
+function allItemIds(){const ids=[];CARDS.forEach(c=>c.items.forEach((_,i)=>ids.push(c.id+'-'+i)));return ids;}
+
+function refreshCounts(){
+  const ids=allItemIds();
+  const total=ids.length;
+  const done=ids.filter(id=>state.checks[id]).length;
+  // overall
+  const pct=total?Math.round(done/total*100):0;
+  document.getElementById('overall').textContent=`${done} of ${total} done · Michigan → Indianapolis`;
+  const ring=document.getElementById('ring');
+  const C=169.6;
+  ring.style.strokeDashoffset=C-(C*pct/100);
+  document.getElementById('ringPct').textContent=pct+'%';
+  // per-card
+  CARDS.forEach(c=>{
+    const ci=c.items.map((_,i)=>c.id+'-'+i);
+    const cd=ci.filter(id=>state.checks[id]).length;
+    const card=document.getElementById('card-'+c.id);
+    card.querySelector('.ccount').textContent=cd+'/'+ci.length;
+    card.querySelector('.cbar i').style.width=(ci.length?cd/ci.length*100:0)+'%';
+    card.classList.toggle('done',cd===ci.length&&ci.length>0);
+  });
+}
+
+/* ---------------- RENDER ---------------- */
+function render(){
+  const grid=document.getElementById('grid');
+
+  CARDS.forEach(c=>{
+    const card=document.createElement('section');
+    card.className='card';card.id='card-'+c.id;card.style.setProperty('--c',c.color);
+    const items=c.items.map((it,i)=>{
+      const id=c.id+'-'+i;const on=state.checks[id]?'checked':'';
+      const note=it.n?`<small>${it.n}</small>`:'';
+      const date=it.d?`<b class="tl-d">${it.d}</b> `:'';
+      return `<label class="item">
+        <input type="checkbox" data-id="${id}" ${on}>
+        <span class="box">${CHECK}</span>
+        <span class="txt">${date}${it.t}${note}</span>
+      </label>`;
+    }).join('');
+    card.innerHTML=`
+      <div class="chead" data-collapse>
+        <div class="icon">${c.icon}</div>
+        <div class="ctitle"><h2>${c.title}</h2>${c.sub?`<div class="sub">${c.sub}</div>`:''}</div>
+        <div class="ccount">0/0</div>
+        <div class="chev">▾</div>
+      </div>
+      <div class="cbar"><i></i></div>
+      <div class="items">${items}</div>`;
+    grid.appendChild(card);
+  });
+
+  // listeners
+  grid.addEventListener('change',e=>{
+    const cb=e.target.closest('input[type=checkbox]');if(!cb)return;
+    state.checks[cb.dataset.id]=cb.checked;
+    if(!cb.checked)delete state.checks[cb.dataset.id];
+    refreshCounts();saveState();
+  });
+  grid.addEventListener('click',e=>{
+    const h=e.target.closest('[data-collapse]');if(!h)return;
+    h.closest('.card').classList.toggle('collapsed');
+  });
+
+  document.getElementById('footer').innerHTML=
+    'Tap a row to check it off · tap a category header to collapse it. Built for the Jul 6 move — adjust as plans firm up.';
+}
+
+/* ---------------- COUNTDOWN ---------------- */
+function tickCountdown(){
+  const move=new Date('2026-07-06T00:00:00-04:00');
+  const now=new Date();
+  const days=Math.ceil((move-now)/86400000);
+  const el=document.getElementById('dMove');
+  if(days>1)el.textContent=days;
+  else if(days===1)el.textContent='1';
+  else if(days===0)el.textContent='TODAY';
+  else el.textContent='✓';
+}
+
+/* ---------------- RESET ---------------- */
+document.getElementById('resetBtn').addEventListener('click',async()=>{
+  if(!confirm('Clear every checkmark and start fresh?'))return;
+  state={checks:{}};
+  document.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.checked=false);
+  document.querySelectorAll('.card').forEach(c=>c.classList.remove('collapsed'));
+  refreshCounts();saveState();
+});
+
+/* ---------------- INIT ---------------- */
+(function(){
+  loadState();
+  render();
+  refreshCounts();
+  updateSaveNote();
+  tickCountdown();
+  setInterval(tickCountdown,60000);
+})();
+</script>
+</body>
+</html>
