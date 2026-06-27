@@ -74,6 +74,25 @@
     font-size:12px;font-weight:600;padding:9px 12px;line-height:1.4;
   }
 
+  /* ---------- Guide banner + card link ---------- */
+  .guidebanner{max-width:1180px;margin:10px auto 0;padding:0 18px;}
+  .guidebanner a{
+    display:flex;align-items:center;gap:9px;text-decoration:none;
+    background:linear-gradient(100deg,#fff1f3,#ffe4e8);
+    border:1px solid #f7c6cf;border-left:4px solid #e11d48;
+    border-radius:12px;padding:11px 14px;color:#9f1239;
+    font-size:13px;font-weight:600;line-height:1.35;
+    transition:transform .15s ease,box-shadow .15s ease;
+  }
+  .guidebanner a:hover{transform:translateY(-1px);box-shadow:0 8px 20px -12px rgba(225,29,72,.5);}
+  .guidebanner .ar{margin-left:auto;font-family:'JetBrains Mono',monospace;}
+  .cardlink{
+    display:inline-block;margin-top:5px;font-size:11.5px;font-weight:600;
+    color:var(--c);text-decoration:none;
+    border-bottom:1px dashed color-mix(in srgb,var(--c) 55%,#fff);padding-bottom:1px;
+  }
+  .cardlink:hover{border-bottom-style:solid;}
+
   /* ---------- Grid + cards ---------- */
   .grid{
     max-width:1180px;margin:0 auto;padding:14px 18px 0;
@@ -174,6 +193,10 @@
   <div class="tag">✅ <b>Already in the unit — don't buy:</b> fridge · stove/oven · microwave · dishwasher · in-unit washer &amp; dryer.</div>
 </div>
 
+<div class="guidebanner">
+  <a href="bmv-guide.html">🚗 Indiana BMV &amp; Car Guide — dates, documents, insurance &amp; the 60-day deadline <span class="ar">→</span></a>
+</div>
+
 <main class="grid" id="grid"></main>
 
 <footer id="footer"></footer>
@@ -211,7 +234,7 @@ const CATS = [
     {t:'Transfer prescriptions / pick a new pharmacy'},
     {t:'Reserve elevator / move-in time slot with the complex'},
   ]},
-  { id:'car', title:'Car & Indiana DMV', icon:'🚗', color:'#e11d48', sub:'BMV: 60 days from residency — bring both cars', items:[
+  { id:'car', title:'Car & Indiana DMV', icon:'🚗', color:'#e11d48', sub:'BMV: 60 days from residency — bring both cars', link:'bmv-guide.html', linkLabel:'📋 Open the full BMV guide →', items:[
     {t:'Update auto insurance to your Indiana address', n:'Do this BEFORE the BMV — you need IN proof to register.'},
     {t:'Indiana driver\u2019s license — you', n:'Surrender MI license; bring ID, SSN, residency docs; get Real ID. 60-day deadline.'},
     {t:'Indiana driver\u2019s license — partner'},
@@ -386,7 +409,7 @@ function render(){
     card.innerHTML=`
       <div class="chead" data-collapse>
         <div class="icon">${c.icon}</div>
-        <div class="ctitle"><h2>${c.title}</h2>${c.sub?`<div class="sub">${c.sub}</div>`:''}</div>
+        <div class="ctitle"><h2>${c.title}</h2>${c.sub?`<div class="sub">${c.sub}</div>`:''}${c.link?`<a class="cardlink" href="${c.link}">${c.linkLabel||'Open guide →'}</a>`:''}</div>
         <div class="ccount">0/0</div>
         <div class="chev">▾</div>
       </div>
@@ -403,6 +426,7 @@ function render(){
     refreshCounts();saveState();
   });
   grid.addEventListener('click',e=>{
+    if(e.target.closest('a'))return;
     const h=e.target.closest('[data-collapse]');if(!h)return;
     h.closest('.card').classList.toggle('collapsed');
   });

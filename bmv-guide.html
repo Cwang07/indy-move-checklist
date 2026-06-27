@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Indiana BMV &amp; Car Guide · Indy Move</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#e9edf4;
+    --ink:#1a1d29;
+    --muted:#5b6172;
+    --line:#dde2ec;
+    --card:#ffffff;
+    --header:#1b1740;
+    --header2:#2a2363;
+    --c:#e11d48;            /* car/BMV accent — ties to the tracker card */
+    --c2:#be123c;
+    --radius:18px;
+    --shadow:0 1px 2px rgba(20,22,40,.05),0 8px 24px -12px rgba(20,22,40,.18);
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;line-height:1.5;
+    padding-bottom:64px;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    position:sticky;top:0;z-index:50;
+    background:linear-gradient(135deg,var(--header),var(--header2));
+    color:#f4f5ff;padding:14px 18px 16px;
+    box-shadow:0 10px 30px -16px rgba(0,0,0,.6);
+  }
+  .hero-inner{max-width:960px;margin:0 auto;}
+  .back{
+    display:inline-flex;align-items:center;gap:6px;text-decoration:none;
+    color:#c4c6ee;font-size:12.5px;font-weight:600;margin-bottom:9px;
+    transition:color .15s ease;
+  }
+  .back:hover{color:#fff;}
+  .hero-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+  .hero-title{flex:1 1 230px;min-width:180px;}
+  .hero-title h1{
+    font-family:'Bricolage Grotesque',sans-serif;font-weight:800;
+    font-size:clamp(22px,5.5vw,32px);margin:0;letter-spacing:-.02em;line-height:1.02;
+  }
+  .hero-title p{margin:4px 0 0;font-size:12.5px;color:#c4c6ee;}
+  .count-strip{display:flex;gap:8px;flex-wrap:wrap;}
+  .chip{
+    background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.16);
+    border-radius:12px;padding:7px 12px;display:flex;flex-direction:column;line-height:1.1;min-width:74px;
+  }
+  .chip b{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;}
+  .chip.hot b{color:#ffb4c1;}
+  .chip span{font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:#bdbff0;margin-top:3px;}
+
+  /* ---------- Layout ---------- */
+  main{max-width:960px;margin:0 auto;padding:0 18px;}
+
+  /* deadline banner */
+  .deadline{
+    margin:18px 0 4px;padding:15px 17px;border-radius:var(--radius);
+    background:linear-gradient(100deg,#fff1f3,#ffe4e8);
+    border:1px solid #f7c6cf;border-left:5px solid var(--c);
+    box-shadow:var(--shadow);
+    display:flex;gap:13px;align-items:flex-start;
+  }
+  .deadline .ic{font-size:22px;line-height:1;flex:none;margin-top:1px;}
+  .deadline h2{margin:0 0 2px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:16px;color:#9f1239;}
+  .deadline p{margin:0;font-size:13px;color:#7c2433;}
+  .deadline b{font-family:'JetBrains Mono',monospace;}
+
+  /* section card */
+  .sec{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:20px 20px 18px;margin:14px 0;
+    border-top:5px solid var(--c);
+    opacity:0;transform:translateY(10px);
+    animation:rise .5s cubic-bezier(.2,.7,.3,1) forwards;
+  }
+  @keyframes rise{to{opacity:1;transform:none;}}
+  .sec:nth-of-type(2){animation-delay:.05s}
+  .sec:nth-of-type(3){animation-delay:.10s}
+  .sec:nth-of-type(4){animation-delay:.15s}
+  .sec:nth-of-type(5){animation-delay:.20s}
+  .sec:nth-of-type(6){animation-delay:.25s}
+  .sec:nth-of-type(7){animation-delay:.30s}
+
+  .sechead{display:flex;align-items:center;gap:12px;margin-bottom:13px;}
+  .num{
+    font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;
+    color:var(--c);background:color-mix(in srgb,var(--c) 11%,#fff);
+    border:1px solid color-mix(in srgb,var(--c) 22%,#fff);
+    width:38px;height:38px;border-radius:11px;flex:none;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .sechead h2{
+    margin:0;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;
+    font-size:19px;letter-spacing:-.01em;line-height:1.1;
+  }
+  .sechead .tag{font-size:11px;color:var(--muted);margin-top:2px;display:block;font-weight:500;}
+
+  .sec p{font-size:14px;margin:0 0 11px;}
+  .sec p:last-child{margin-bottom:0;}
+  .sec strong{font-weight:600;}
+
+  /* lists */
+  ul.clean{list-style:none;margin:0 0 11px;padding:0;}
+  ul.clean li{
+    position:relative;padding:6px 0 6px 26px;font-size:14px;border-bottom:1px solid var(--line);
+  }
+  ul.clean li:last-child{border-bottom:none;}
+  ul.clean li::before{
+    content:"";position:absolute;left:6px;top:13px;width:7px;height:7px;border-radius:2px;
+    background:var(--c);
+  }
+  ul.clean li small{display:block;color:var(--muted);font-size:12px;margin-top:2px;}
+  ul.clean.num-list{counter-reset:n;}
+  ul.clean.num-list li{padding-left:34px;}
+  ul.clean.num-list li::before{
+    counter-increment:n;content:counter(n);background:none;color:var(--c);
+    font-family:'JetBrains Mono',monospace;font-weight:700;font-size:12px;
+    left:4px;top:6px;width:auto;height:auto;border-radius:0;
+  }
+
+  /* callouts */
+  .call{border-radius:12px;padding:11px 13px;margin:0 0 11px;font-size:13px;border:1px solid;display:flex;gap:9px;align-items:flex-start;}
+  .call .e{flex:none;font-size:15px;line-height:1.3;}
+  .call.warn{background:#fff8eb;border-color:#f4dca0;color:#7a4f05;}
+  .call.good{background:#eefaf2;border-color:#bfe6cd;color:#0c6b43;}
+  .call.info{background:#eef0ff;border-color:#c9cdf5;color:#2d2a72;}
+  .call b{font-weight:700;}
+
+  /* tables */
+  .tbl{width:100%;border-collapse:collapse;margin:2px 0 11px;font-size:13px;overflow:hidden;border-radius:12px;border:1px solid var(--line);}
+  .tbl th,.tbl td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top;}
+  .tbl th{background:#f4f6fb;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);}
+  .tbl tr:last-child td{border-bottom:none;}
+  .tbl td b{font-family:'JetBrains Mono',monospace;color:var(--c2);}
+
+  /* timeline */
+  .tl{position:relative;margin:4px 0 4px;padding-left:8px;}
+  .tl-item{position:relative;padding:0 0 16px 26px;border-left:2px solid var(--line);margin-left:6px;}
+  .tl-item:last-child{border-left-color:transparent;padding-bottom:0;}
+  .tl-item::before{
+    content:"";position:absolute;left:-7px;top:2px;width:12px;height:12px;border-radius:50%;
+    background:#fff;border:3px solid var(--c);
+  }
+  .tl-item.hot::before{background:var(--c);box-shadow:0 0 0 4px color-mix(in srgb,var(--c) 22%,#fff);}
+  .tl-when{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:11.5px;color:var(--c);letter-spacing:.01em;}
+  .tl-what{font-size:13.5px;margin-top:2px;}
+  .tl-what small{display:block;color:var(--muted);font-size:12px;margin-top:1px;}
+
+  /* interactive bring-list */
+  .pack{margin:4px 0 2px;}
+  .pack .item{
+    display:flex;align-items:flex-start;gap:11px;padding:9px 8px;border-radius:11px;
+    cursor:pointer;min-height:42px;position:relative;
+  }
+  .pack .item:hover{background:color-mix(in srgb,var(--c) 7%,#fff);}
+  .pack input{position:absolute;opacity:0;width:1px;height:1px;}
+  .box{
+    flex:none;width:21px;height:21px;border-radius:6px;margin-top:1px;
+    border:2px solid #c5cbd8;background:#fff;
+    display:flex;align-items:center;justify-content:center;transition:.15s;
+  }
+  .box svg{width:13px;height:13px;opacity:0;transform:scale(.5);transition:.15s;}
+  .pack input:checked ~ .box{background:var(--c);border-color:var(--c);}
+  .pack input:checked ~ .box svg{opacity:1;transform:scale(1);}
+  .pack input:focus-visible ~ .box{outline:3px solid color-mix(in srgb,var(--c) 45%,#fff);outline-offset:2px;}
+  .pack .lab{font-size:14px;}
+  .pack input:checked ~ .lab{color:#9aa0b0;text-decoration:line-through;text-decoration-color:#c5cbd8;}
+  .packnote{font-size:11.5px;color:var(--muted);margin-top:8px;}
+
+  /* sources */
+  .src{margin:18px 0 0;padding:16px 18px;background:#f4f6fb;border:1px solid var(--line);border-radius:var(--radius);}
+  .src h3{margin:0 0 9px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;}
+  .src ul{margin:0;padding-left:18px;font-size:12.5px;}
+  .src li{margin:3px 0;}
+  .src a{color:var(--c2);}
+
+  .disclaim{max-width:960px;margin:16px auto 0;padding:0 18px;font-size:11px;color:var(--muted);}
+
+  a{color:var(--c2);}
+  @media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important;}.sec{opacity:1;transform:none;}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <a class="back" href="index.html">← Back to Move Tracker</a>
+    <div class="hero-row">
+      <div class="hero-title">
+        <h1>Indiana BMV &amp; Car Guide</h1>
+        <p>Michigan → Indianapolis · licenses, titles, plates, insurance &amp; the 60-day deadline</p>
+      </div>
+      <div class="count-strip">
+        <div class="chip hot"><b id="dDead">–</b><span>days to deadline</span></div>
+        <div class="chip"><b>Sep 4</b><span>legal cutoff</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <div class="deadline">
+    <div class="ic">⚖️</div>
+    <div>
+      <h2>The one rule that drives everything</h2>
+      <p>Indiana gives new residents <b>60 days</b> to convert <strong>both driver's licenses</strong> and to title + register <strong>both vehicles</strong>. Your clock starts at move-in (<b>Jul 6</b>), so the hard legal deadline is <strong>on/about Sep 4, 2026</strong>. Miss the vehicle deadline and it's a <b>$30 penalty per car</b>. Target mid-to-late July — don't wait.</p>
+    </div>
+  </div>
+
+  <table class="tbl">
+    <tr><th>What</th><th>Who / how many</th><th>Deadline</th><th>Penalty if missed</th></tr>
+    <tr><td>Indiana driver's license</td><td>You + partner (×2)</td><td><b>60 days</b> (~Sep 4)</td><td>Invalid status / citation</td></tr>
+    <tr><td>Indiana title + registration</td><td>Crosstrek + partner's car (×2)</td><td><b>60 days</b> (~Sep 4)</td><td><b>$30</b> per vehicle</td></tr>
+  </table>
+
+  <!-- 01 -->
+  <section class="sec">
+    <div class="sechead">
+      <div class="num">01</div>
+      <div><h2>Switch your car insurance — first</h2><span class="tag">Do this before the BMV trip</span></div>
+    </div>
+    <div class="call info"><span class="e">🔑</span><div><b>Why it's step one:</b> you must show <b>Indiana proof of insurance</b> to register the cars. No IN insurance = you can't finish at the counter. This gates everything else.</div></div>
+    <ul class="clean">
+      <li><strong>Call your insurer now.</strong> Give them the move date (Jul 6) and the new Indianapolis address.</li>
+      <li><strong>It's a re-rate, not just an address change.</strong> Michigan is a no-fault/PIP state; Indiana is at-fault (tort), so the policy gets restructured. <small>Your premium will very likely <strong>drop</strong> — Michigan is one of the priciest states in the country.</small></li>
+      <li><strong>Make it effective on or just before Jul 6.</strong> Transition the same policy — <strong>don't cancel Michigan and leave a coverage gap.</strong></li>
+      <li><strong>Get new digital insurance ID cards</strong> showing the Indiana address to display at the BMV.</li>
+    </ul>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:4px;"><strong>Indiana minimum coverage — "25/50/25":</strong></p>
+    <table class="tbl">
+      <tr><th>Coverage</th><th>Minimum</th></tr>
+      <tr><td>Bodily injury, per person</td><td><b>$25,000</b></td></tr>
+      <tr><td>Bodily injury, per accident</td><td><b>$50,000</b></td></tr>
+      <tr><td>Property damage</td><td><b>$25,000</b></td></tr>
+      <tr><td>Uninsured / underinsured motorist</td><td>Included unless declined in writing — keep it</td></tr>
+    </table>
+  </section>
+
+  <!-- 02 -->
+  <section class="sec">
+    <div class="sechead">
+      <div class="num">02</div>
+      <div><h2>Driver's licenses — you + partner</h2><span class="tag">The easy part if your MI license is valid</span></div>
+    </div>
+    <div class="call good"><span class="e">✅</span><div><b>No written test, no road test.</b> Since you both hold valid MI licenses held over a year, you only need a <b>vision screening</b>. (Knowledge test applies only if expired; road test only if expired 5+ yrs or licensed under 1 yr.)</div></div>
+    <div class="call warn"><span class="e">⚠️</span><div>You must <b>surrender your Michigan license</b> when you get the Indiana one — you can't hold both.</div></div>
+    <p><strong>Bring these — and get the Real ID version</strong> (the star in the corner; it's now required to board domestic flights, and these are the exact documents it needs):</p>
+    <ul class="clean num-list">
+      <li><strong>Identity + lawful status</strong> — U.S. passport <em>or</em> certified birth certificate</li>
+      <li><strong>Full Social Security Number</strong> — SS card, W-2, or a pay stub showing the full SSN</li>
+      <li><strong>TWO proofs of Indiana residency, dated within 60 days</strong><small>e.g., signed lease + a utility bill (AES / Citizens), bank statement, or the insurance policy with the new address</small></li>
+      <li><strong>Your current Michigan license</strong></li>
+    </ul>
+    <p style="font-size:13px;color:var(--muted);">At the branch you'll get a <strong>30-day temporary paper license</strong>; the real Real ID card arrives by mail.</p>
+  </section>
+
+  <!-- 03 -->
+  <section class="sec">
+    <div class="sechead">
+      <div class="num">03</div>
+      <div><h2>Title + registration — both cars</h2><span class="tag">Crosstrek + partner's vehicle</span></div>
+    </div>
+    <p><strong>A VIN inspection is required</strong> for every out-of-state vehicle. Two ways to satisfy it:</p>
+    <ul class="clean">
+      <li><strong>Easiest &amp; free:</strong> drive the car to the BMV branch — they verify the VIN on the spot at no charge. <small>With two cars, just caravan both so both VINs get done in one visit.</small></li>
+      <li><strong>Alternative:</strong> have a law-enforcement officer complete <strong>State Form 39530</strong> beforehand (officer may charge up to $5) and bring it.</li>
+    </ul>
+    <p><strong>Documents per vehicle:</strong></p>
+    <ul class="clean">
+      <li>The out-of-state (Michigan) <strong>certificate of title</strong></li>
+      <li><strong>Indiana proof of insurance</strong> (from step 01)</li>
+      <li><strong>Proof of Indiana address</strong>, dated within 60 days</li>
+      <li><strong>SSN proof</strong></li>
+    </ul>
+    <div class="call warn"><span class="e">🏦</span><div><b>Check whether either car is financed.</b> If there's a loan, the <b>lienholder holds the title</b> — Indiana must request it from your lender, which adds lead time. If the Crosstrek or your partner's car has a loan, <b>start this now</b>, don't discover it at the counter.</div></div>
+    <div class="call good"><span class="e">🌿</span><div><b>No emissions test.</b> Indiana only requires it in Lake &amp; Porter counties — Indianapolis is Marion County, so you're exempt.</div></div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:4px;"><strong>Fees to budget — annual registration, roughly per vehicle:</strong></p>
+    <table class="tbl">
+      <tr><th>Item</th><th>Approx.</th></tr>
+      <tr><td>Base BMV registration fee</td><td><b>$15</b></td></tr>
+      <tr><td>Excise tax (by original MSRP + age)</td><td>the big variable</td></tr>
+      <tr><td>County fee</td><td><b>~$7.50</b></td></tr>
+      <tr><td>Transportation Infrastructure Improvement Fee</td><td><b>~$15</b></td></tr>
+      <tr><td>Title fee</td><td><b>~$15</b></td></tr>
+    </table>
+    <div class="call info"><span class="e">💡</span><div><b>Ask for new-resident credit</b> — Indiana may credit recently-paid Michigan registration, but they don't always offer it proactively.</div></div>
+  </section>
+
+  <!-- 04 -->
+  <section class="sec">
+    <div class="sechead">
+      <div class="num">04</div>
+      <div><h2>Register to vote — just bundle it in</h2></div>
+    </div>
+    <p>You can <strong>register to vote at the BMV during any transaction</strong> — no separate trip, no appointment needed. When you're doing your license, tell the clerk you also want to register to vote. <span style="color:var(--muted);">(You must be a resident 30 days before an election to vote in it, but registering early costs nothing.)</span></p>
+  </section>
+
+  <!-- 05 -->
+  <section class="sec">
+    <div class="sechead">
+      <div class="num">05</div>
+      <div><h2>Your day-by-day schedule</h2></div>
+    </div>
+    <div class="tl">
+      <div class="tl-item">
+        <div class="tl-when">NOW · late June</div>
+        <div class="tl-what">Call insurer; queue the IN policy change for Jul 6. Confirm whether either car is financed. Gather docs: passports, SS cards, MI titles, MI licenses.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-when">~JUL 1–3 · pre-move</div>
+        <div class="tl-what">Confirm the insurance change activates Jul 6. Make sure you'll have digital IN insurance cards.</div>
+      </div>
+      <div class="tl-item hot">
+        <div class="tl-when">JUL 6 · MOVE DAY</div>
+        <div class="tl-what">Insurance goes effective. <strong>Residency clock starts → deadline ~Sep 4.</strong></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-when">JUL 7</div>
+        <div class="tl-what">Orientation 8 AM — <strong>don't</strong> schedule the BMV today.</div>
+      </div>
+      <div class="tl-item hot">
+        <div class="tl-when">WEEK OF JUL 13–24</div>
+        <div class="tl-what"><strong>The BMV trip.</strong> Both people, both cars, all documents — licenses + both registrations + voter reg in one visit.<small>Early enough to fix any surprise (missing doc, lien title) with weeks of buffer, and to get IN plates before any traffic stop.</small></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-when">~SEP 4 · hard deadline</div>
+        <div class="tl-what">Absolute legal cutoff — treat it as a backstop, not a target.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 -->
+  <section class="sec">
+    <div class="sechead">
+      <div class="num">06</div>
+      <div><h2>One-trip BMV game plan</h2><span class="tag">Tap to check off — saves automatically</span></div>
+    </div>
+    <p style="font-size:13px;">Book an appointment at the BMV portal (walk-ins are accepted, but Marion County branches get busy and you've got 4 transactions). <strong>Bring both cars</strong> for the VIN checks. Order at the counter: licenses → VIN inspections → titles/registrations → "…and please register us to vote."</p>
+    <div class="pack" id="pack"></div>
+    <p class="packnote" id="packnote">Progress saves automatically on this device.</p>
+  </section>
+
+  <!-- 07 -->
+  <section class="sec">
+    <div class="sechead">
+      <div class="num">07</div>
+      <div><h2>Don't forget the Michigan loose ends</h2></div>
+    </div>
+    <ul class="clean">
+      <li>Your <strong>MI license is surrendered</strong> at the Indiana counter automatically.</li>
+      <li>Once Indiana plates are active, <strong>stop paying Michigan registration/insurance</strong> — let the MI policy roll into the IN one (no gap).</li>
+      <li><strong>Retire the Michigan plates</strong> per MI's process once the Indiana plates are on the cars.</li>
+    </ul>
+  </section>
+
+  <div class="src">
+    <h3>Sources — official &amp; verified (June 2026)</h3>
+    <ul>
+      <li><a href="https://www.in.gov/bmv/licenses-permits-ids/new-indiana-residents" target="_blank" rel="noopener">Indiana BMV — New Indiana Residents</a></li>
+      <li><a href="https://www.in.gov/bmv/registration-plates/vehicle-registrations/" target="_blank" rel="noopener">Indiana BMV — Vehicle Registrations</a></li>
+      <li><a href="https://www.in.gov/bmv/fees-taxes/vehicle-registration-fees-and-taxes/" target="_blank" rel="noopener">Indiana BMV — Registration Fees &amp; Taxes</a></li>
+      <li><a href="https://www.in.gov/bmv/titles/files/Out_of_State_Title_Transfer_Packet.pdf" target="_blank" rel="noopener">Indiana BMV — Out-of-State Title Transfer Packet (PDF)</a></li>
+      <li><a href="https://www.in.gov/bmv/resources/voter-information/" target="_blank" rel="noopener">Indiana BMV — Voter Information</a></li>
+      <li><a href="https://telegov.egov.com/bmvappointments" target="_blank" rel="noopener">Indiana BMV — Branch Appointment Scheduling</a></li>
+      <li><a href="https://insurify.com/car-insurance/indiana/minimum-requirements/" target="_blank" rel="noopener">Indiana Car Insurance Requirements 2026 (Insurify)</a></li>
+    </ul>
+  </div>
+
+</main>
+
+<p class="disclaim">Built from official Indiana BMV guidance as of June 2026 to help plan the move. Rules, fees and forms can change — confirm specifics with the BMV or your insurer before your appointment. Not legal advice.</p>
+
+<script>
+  const CHECK='<svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  /* ---- what to bring checklist ---- */
+  const BRING=[
+    'Both U.S. passports (or birth certificates)',
+    'Both Social Security cards',
+    'Both Michigan driver’s licenses (to surrender)',
+    'Both Michigan vehicle titles',
+    'Two proofs of IN residency, dated within 60 days (lease + utility bill)',
+    'Indiana insurance cards for both cars',
+    'Payment for fees',
+    'If financed: lienholder / title paperwork sorted ahead of time',
+    'Both cars driven to the branch (for the free VIN checks)'
+  ];
+  const KEY='indy_bmv_guide_v1';
+  let checks={};
+  try{const r=localStorage.getItem(KEY);if(r)checks=JSON.parse(r)||{};}catch(e){
+    document.getElementById('packnote').textContent='Heads up: progress won’t persist in this view, but you can still check things off.';
+  }
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(checks));}catch(e){}}
+
+  const pack=document.getElementById('pack');
+  pack.innerHTML=BRING.map((t,i)=>{
+    const on=checks['b'+i]?'checked':'';
+    return `<label class="item"><input type="checkbox" data-i="${i}" ${on}><span class="box">${CHECK}</span><span class="lab">${t}</span></label>`;
+  }).join('');
+  pack.addEventListener('change',e=>{
+    const cb=e.target.closest('input');if(!cb)return;
+    const k='b'+cb.dataset.i;
+    if(cb.checked)checks[k]=true;else delete checks[k];
+    save();
+  });
+
+  /* ---- countdown to the legal deadline ---- */
+  function tick(){
+    const dl=new Date('2026-09-04T23:59:59-04:00');
+    const days=Math.ceil((dl-new Date())/86400000);
+    const el=document.getElementById('dDead');
+    el.textContent = days>1?days : days===1?'1' : days===0?'TODAY' : 'past';
+  }
+  tick();setInterval(tick,60000);
+</script>
+</body>
+</html>
