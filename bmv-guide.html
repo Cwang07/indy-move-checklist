@@ -75,6 +75,21 @@
   .deadline p{margin:0;font-size:13px;color:#7c2433;}
   .deadline b{font-family:'JetBrains Mono',monospace;}
 
+  /* quick actions */
+  .qa{margin:14px 0 4px;}
+  .qa h3{margin:0 0 9px;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600;}
+  .qa-row{display:flex;gap:9px;flex-wrap:wrap;}
+  .qa-row a{
+    display:flex;align-items:center;gap:8px;text-decoration:none;
+    background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:10px 13px;font-size:13px;font-weight:600;color:var(--ink);
+    box-shadow:var(--shadow);
+    transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease;
+  }
+  .qa-row a:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--c) 45%,#fff);box-shadow:0 10px 22px -12px rgba(225,29,72,.45);}
+  .qa-row a .qi{font-size:16px;line-height:1;}
+  .qa-row a .qx{margin-left:2px;font-family:'JetBrains Mono',monospace;color:var(--c);font-size:12px;}
+
   /* section card */
   .sec{
     background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
@@ -218,6 +233,17 @@
     </div>
   </div>
 
+  <div class="qa">
+    <h3>Quick actions — get it done</h3>
+    <div class="qa-row">
+      <a href="https://telegov.egov.com/bmvappointments" target="_blank" rel="noopener"><span class="qi">📅</span> Book a BMV appointment <span class="qx">↗</span></a>
+      <a href="https://www.in.gov/bmv/branch-locations-and-hours/bmv-branch-map/" target="_blank" rel="noopener"><span class="qi">📍</span> Find your branch <span class="qx">↗</span></a>
+      <a href="https://indianavoters.in.gov/" target="_blank" rel="noopener"><span class="qi">🗳️</span> Register to vote online <span class="qx">↗</span></a>
+      <a href="https://www.in.gov/bmv/licenses-permits-ids/new-indiana-residents" target="_blank" rel="noopener"><span class="qi">✅</span> Official new-resident checklist <span class="qx">↗</span></a>
+      <a href="https://forms.in.gov/Download.aspx?id=14984" target="_blank" rel="noopener"><span class="qi">📄</span> VIN inspection form (39530) <span class="qx">↗</span></a>
+    </div>
+  </div>
+
   <table class="tbl">
     <tr><th>What</th><th>Who / how many</th><th>Deadline</th><th>Penalty if missed</th></tr>
     <tr><td>Indiana driver's license</td><td>You + partner (×2)</td><td><b>60 days</b> (~Sep 4)</td><td>Invalid status / citation</td></tr>
@@ -274,7 +300,7 @@
     <p><strong>A VIN inspection is required</strong> for every out-of-state vehicle. Two ways to satisfy it:</p>
     <ul class="clean">
       <li><strong>Easiest &amp; free:</strong> drive the car to the BMV branch — they verify the VIN on the spot at no charge. <small>With two cars, just caravan both so both VINs get done in one visit.</small></li>
-      <li><strong>Alternative:</strong> have a law-enforcement officer complete <strong>State Form 39530</strong> beforehand (officer may charge up to $5) and bring it.</li>
+      <li><strong>Alternative:</strong> have a law-enforcement officer complete <a href="https://forms.in.gov/Download.aspx?id=14984" target="_blank" rel="noopener"><strong>State Form 39530</strong></a> beforehand (officer may charge up to $5) and bring it.</li>
     </ul>
     <p><strong>Documents per vehicle:</strong></p>
     <ul class="clean">
@@ -303,7 +329,7 @@
       <div class="num">04</div>
       <div><h2>Register to vote — just bundle it in</h2></div>
     </div>
-    <p>You can <strong>register to vote at the BMV during any transaction</strong> — no separate trip, no appointment needed. When you're doing your license, tell the clerk you also want to register to vote. <span style="color:var(--muted);">(You must be a resident 30 days before an election to vote in it, but registering early costs nothing.)</span></p>
+    <p>You can <strong>register to vote at the BMV during any transaction</strong> — no separate trip, no appointment needed. When you're doing your license, tell the clerk you also want to register to vote — or knock it out right now online at <a href="https://indianavoters.in.gov/" target="_blank" rel="noopener">the official Indiana voter portal</a> (you'll need your new IN license/ID, so easiest to do it after the BMV). <span style="color:var(--muted);">(You must be a resident 30 days before an election to vote in it, but registering early costs nothing.)</span></p>
   </section>
 
   <!-- 05 -->
@@ -346,7 +372,7 @@
       <div class="num">06</div>
       <div><h2>One-trip BMV game plan</h2><span class="tag">Tap to check off — saves automatically</span></div>
     </div>
-    <p style="font-size:13px;">Book an appointment at the BMV portal (walk-ins are accepted, but Marion County branches get busy and you've got 4 transactions). <strong>Bring both cars</strong> for the VIN checks. Order at the counter: licenses → VIN inspections → titles/registrations → "…and please register us to vote."</p>
+    <p style="font-size:13px;"><a href="https://telegov.egov.com/bmvappointments" target="_blank" rel="noopener">Book an appointment</a> at the BMV portal and <a href="https://www.in.gov/bmv/branch-locations-and-hours/bmv-branch-map/" target="_blank" rel="noopener">find your nearest branch</a> (walk-ins are accepted, but Marion County branches get busy and you've got 4 transactions). <strong>Bring both cars</strong> for the VIN checks. Order at the counter: licenses → VIN inspections → titles/registrations → "…and please register us to vote."</p>
     <div class="pack" id="pack"></div>
     <p class="packnote" id="packnote">Progress saves automatically on this device.</p>
   </section>
@@ -373,6 +399,9 @@
       <li><a href="https://www.in.gov/bmv/titles/files/Out_of_State_Title_Transfer_Packet.pdf" target="_blank" rel="noopener">Indiana BMV — Out-of-State Title Transfer Packet (PDF)</a></li>
       <li><a href="https://www.in.gov/bmv/resources/voter-information/" target="_blank" rel="noopener">Indiana BMV — Voter Information</a></li>
       <li><a href="https://telegov.egov.com/bmvappointments" target="_blank" rel="noopener">Indiana BMV — Branch Appointment Scheduling</a></li>
+      <li><a href="https://www.in.gov/bmv/branch-locations-and-hours/bmv-branch-map/" target="_blank" rel="noopener">Indiana BMV — Branch Locator Map</a></li>
+      <li><a href="https://indianavoters.in.gov/" target="_blank" rel="noopener">IndianaVoters — Register / update voter registration</a></li>
+      <li><a href="https://forms.in.gov/Download.aspx?id=14984" target="_blank" rel="noopener">Indiana State Form 39530 — Physical Inspection of a Vehicle (VIN)</a></li>
       <li><a href="https://insurify.com/car-insurance/indiana/minimum-requirements/" target="_blank" rel="noopener">Indiana Car Insurance Requirements 2026 (Insurify)</a></li>
     </ul>
   </div>

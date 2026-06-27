@@ -153,6 +153,9 @@
   .item input:focus-visible ~ .box{outline:3px solid color-mix(in srgb,var(--c) 45%,#fff);outline-offset:2px;}
   .txt{font-size:14px;color:var(--ink);}
   .txt small{display:block;font-size:11.5px;color:var(--muted);margin-top:2px;line-height:1.35;}
+  .txt a{color:var(--c);font-weight:600;text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--c) 40%,#fff);}
+  .txt a:hover{border-bottom-color:var(--c);}
+  .item input:checked ~ .txt a{color:#9aa0b0;border-bottom-color:#d9dde6;}
   .item input:checked ~ .txt{color:#9aa0b0;text-decoration:line-through;text-decoration-color:#c5cbd8;}
   .item input:checked ~ .txt small{text-decoration:none;}
 
@@ -211,23 +214,23 @@ const TIMELINE = {
   items:[
     {d:'This wk', t:'Lock an internet install slot (Jul 6–7) + bind renters insurance'},
     {d:'~Jul 1', t:'Set up electric (AES) and gas/water (Citizens); send insurance proof to leasing'},
-    {d:'~Jul 1', t:'Start USPS mail forwarding; confirm U-Haul + helpers'},
+    {d:'~Jul 1', t:'Start <a href="https://www.usps.com/manage/forward.htm" target="_blank" rel="noopener">USPS mail forwarding</a>; confirm <a href="https://www.uhaul.com/Truck-Rentals/" target="_blank" rel="noopener">U-Haul</a> + helpers'},
     {d:'Jul 5', t:'Pack the first-night box in the car; final readings/photos at old place'},
     {d:'Jul 6', t:'MOVE DAY — walkthrough photos to leasing; find breaker/shutoff/detectors'},
     {d:'Jul 7', t:'Orientation, 8:00 AM EDT — leave early'},
     {d:'Wk Jul 7', t:'Update address everywhere (employer, bank, cards, pharmacy)'},
-    {d:'By Sep 4', t:'IN license, plates, voter reg — the 60-day legal deadline (do it early)'},
+    {d:'By Sep 4', t:'IN license, plates, voter reg — the 60-day legal deadline (do it early) · <a href="bmv-guide.html">BMV guide →</a>'},
   ]
 };
 
 const CATS = [
   { id:'util', title:'Utilities & Accounts', icon:'⚡', color:'#d97706', sub:'Set up before keys + change of address', items:[
-    {t:'Schedule internet / WiFi install', n:'Compare AT&T Fiber · Xfinity · Metronet by address. Prioritize fiber for dev work + gaming.'},
-    {t:'Set up electric — AES Indiana', n:'Call (317) 261-8222 · 3–5 business days before move-in.'},
-    {t:'Set up gas + water/sewer — Citizens Energy', n:'Online or (317) 924-3311 · handles gas, water AND wastewater.'},
+    {t:'Schedule internet / WiFi install', n:'Compare AT&T Fiber · Xfinity · Metronet by address (<a href="https://broadbandnow.com/Indiana/Indianapolis" target="_blank" rel="noopener">check availability</a>). Prioritize fiber for dev work + gaming.'},
+    {t:'Set up electric — <a href="https://www.aesindiana.com/start-residential-service" target="_blank" rel="noopener">AES Indiana</a>', n:'Call (317) 261-8222 · 3–5 business days before move-in.'},
+    {t:'Set up gas + water/sewer — <a href="https://www.citizensenergygroup.com/My-Home/Start-or-Stop-Service" target="_blank" rel="noopener">Citizens Energy</a>', n:'Online or (317) 924-3311 · handles gas, water AND wastewater.'},
     {t:'Confirm trash/recycling', n:'Often the complex; otherwise City of Indianapolis DPW. Ask leasing.'},
     {t:'Bind renters insurance + send proof to leasing'},
-    {t:'Start USPS mail forwarding', n:'Set effective date to ~Jul 6.'},
+    {t:'Start <a href="https://www.usps.com/manage/forward.htm" target="_blank" rel="noopener">USPS mail forwarding</a>', n:'Set effective date to ~Jul 6.'},
     {t:'Update address — DB Services / EaseCentral'},
     {t:'Update address — Huntington Bank', n:'Confirm the direct-deposit voided-check issue is cleared before first payday.'},
     {t:'Update address — credit cards, Amazon, subscriptions'},
